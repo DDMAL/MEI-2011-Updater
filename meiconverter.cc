@@ -157,8 +157,12 @@ void Convert(xmlNode* node) {
 			xmlNodeSetName(curnode, (const xmlChar*)"pgDesc");
 		} else if (string((const char*)curnode->name) == "pgfoot") {
 			xmlNodeSetName(curnode, (const xmlChar*)"pgFoot");
+		} else if (string((const char*)curnode->name) == "pgfoot1") {
+			xmlNodeSetName(curnode, (const xmlChar*)"pgFoot");
 		} else if (string((const char*)curnode->name) == "pgfoot2") {
 			xmlNodeSetName(curnode, (const xmlChar*)"pgFoot2");
+		} else if (string((const char*)curnode->name) == "pghead1") {
+			xmlNodeSetName(curnode, (const xmlChar*)"pgHead");
 		} else if (string((const char*)curnode->name) == "pghead") {
 			xmlNodeSetName(curnode, (const xmlChar*)"pgHead");
 		} else if (string((const char*)curnode->name) == "pghead2") {
@@ -198,12 +202,12 @@ void Convert(xmlNode* node) {
 				xmlAttr* curattr = curnode->properties;
 				while (curattr) {
 					if (string((const char*)curattr->name) == "label.full") {
-						xmlChar* value = NULL;
+						string value = "";
 						if (curattr->children) {
-							value = curattr->children->content;
+							value = string((const char*)curattr->children->content);
 						}
-						xmlRemoveProp(curattr);
-						xmlNewProp(curnode, (const xmlChar*)"label", value);
+						xmlUnsetProp(curnode, curattr->name);
+						xmlNewProp(curnode, (const xmlChar*)"label", (const xmlChar*)value.c_str());
 						break;
 					} else {
 						curattr = curattr->next;
@@ -212,6 +216,22 @@ void Convert(xmlNode* node) {
 			}
 			xmlNodeSetName(curnode, (const xmlChar*)"staffDef");
 		} else if (string((const char*)curnode->name) == "staffgrp") {
+		    if (curnode->properties) {
+				xmlAttr* curattr = curnode->properties;
+				while (curattr) {
+					if (string((const char*)curattr->name) == "label.full") {
+						string value = "";
+						if (curattr->children) {
+							value = string((const char*)curattr->children->content);
+						}
+						xmlUnsetProp(curnode, curattr->name);
+						xmlNewProp(curnode, (const xmlChar*)"label", (const xmlChar*)value.c_str());
+						break;
+					} else {
+						curattr = curattr->next;
+					}
+				}
+			}
 			xmlNodeSetName(curnode, (const xmlChar*)"staffGrp");
 		} else if (string((const char*)curnode->name) == "stdvals") {
 			xmlNodeSetName(curnode, (const xmlChar*)"stdVals");
@@ -241,8 +261,11 @@ void Convert(xmlNode* node) {
 			xmlNodeSetName(curnode, (const xmlChar*)"useRestrict");
 		} else if (string((const char*)curnode->name) == "profiledesc") {
 			xmlNodeSetName(curnode, (const xmlChar*)"workDesc");
-			xmlNewChild(curnode,curnode->ns,(const xmlChar*)"work",curnode->content);
+			xmlNode* work = xmlNewNode(curnode->ns, (const xmlChar*)"work");
+			xmlNode* copyprops = xmlCopyNodeList(curnode->children);
+			xmlAddChildList(work,copyprops);
 			xmlNodeSetContent(curnode, NULL);
+			xmlAddChild(curnode,work);
 		}
 		Convert(curnode->children);
 	}
