@@ -1,5 +1,5 @@
 /*
- * Script for converting MEI files to the camelCase standard
+ * Script for converting MEI files to the 2011 spec.
  * Jamie Klassen, July 6 2011
  *
 */
