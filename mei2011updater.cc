@@ -12,16 +12,24 @@ using namespace std;
 
 void Convert(xmlNode* node);
 
-int main ( int argc, char *argv[] ) {
-	for (int i = 1; i < argc; i++) {
-		xmlDoc *doc = xmlReadFile(argv[i], NULL, 0);
-		xmlNode *rootelement = xmlDocGetRootElement(doc);
-		cout << "Converting " << argv[i] << "...";
-		Convert(rootelement);
-		xmlSaveFormatFile(argv[i], doc, 1);
-		cout << "Converted.\n";
-	}
-	return 0;
+int main (int argc, char *argv[]) {
+  if (argc > 1) {
+     for (int i=1; i<argc; i++) {
+        xmlDoc *doc = xmlReadFile(argv[i], NULL, 0);
+        xmlNode *rootelement = xmlDocGetRootElement(doc);
+        cout << "Converting " << argv[i] << "...";
+        Convert(rootelement);
+        xmlSaveFormatFile(argv[i], doc, 1);
+        cout << "Converted.\n";
+     }
+  } else {
+     // No arguments given: read standard input and write to standard output.
+     xmlDoc *doc = xmlReadFile("-", NULL, 0);
+     xmlNode *rootelement = xmlDocGetRootElement(doc);
+     Convert(rootelement);
+     xmlSaveFormatFile("-", doc, 1);
+  }
+  return 0;
 }
 
 void Convert(xmlNode* node) {
