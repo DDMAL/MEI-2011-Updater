@@ -1,5 +1,7 @@
 /*
- * Script for converting MEI files to the 2011 spec.
+ * Script for converting MEI files from the 2010-05 specification to the 
+ * 2011-05 specification.
+ *
  * Jamie Klassen, July 6 2011
  *
 */
